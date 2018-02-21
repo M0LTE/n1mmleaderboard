@@ -1,0 +1,14 @@
+/n1mmlistener/n1mmlistener.db
+/DapperExtensionsDNC/bin
+/DapperExtensionsDNC/obj
+/n1mmlistener/obj
+/n1mmlistener/bin
+/n1mmsender/obj
+/n1mmsender/bin
+/packages
+/pub
+/.vs/n1mmlistener/v15/.suo
+/.vs/n1mmlistener/v15/Server/sqlite3/db.lock
+/.vs/n1mmlistener/v15/Server/sqlite3/storage.ide
+/.vs/n1mmlistener/v15/Server/sqlite3/storage.ide-shm
+/.vs/n1mmlistener/v15/Server/sqlite3/storage.ide-wal

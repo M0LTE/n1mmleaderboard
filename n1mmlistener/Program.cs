@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using DapperExtensions.Mapper;
 using DapperExtensions;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -14,7 +13,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Xml;
-using DapperExtensions.Sql;
 using System.Diagnostics;
 
 namespace n1mmlistener
@@ -201,7 +199,11 @@ namespace n1mmlistener
                 ContestNumber = cb.Contestnr,
                 Operator = cb.Operator,
                 StationName = cb.StationName,
-                TimestampUtc = cb.Timestamp
+                TimestampUtc_dt = DateTime.Parse(cb.Timestamp),
+                Band = cb.Band,
+                IsMultiplier1 = cb.Ismultiplier1 != 0,
+                IsMultiplier2 = cb.Ismultiplier2 != 0,
+                IsMultiplier3 = cb.Ismultiplier3 != 0,
             };
         }
 
@@ -227,6 +229,14 @@ namespace n1mmlistener
         {
             var contactRepo = new ContactRepo();
 
+            if (DateTime.TryParse(cr.Timestamp, out DateTime contactTime))
+            {
+                foreach (var contact in contactRepo.GetList(contactTime, null, cr.Contestnr, cr.StationName))
+                {
+                    contactRepo.Delete(contact);
+                }
+            }
+
             contactRepo.Add(Map(cr));
 
             GetRow(cr.Operator).TotalQsos++;
@@ -249,7 +259,7 @@ namespace n1mmlistener
 
         public ContactRepo()
         {
-            DapperExtensions.DapperExtensions.SqlDialect = new SqliteDialect();
+            //DapperExtensions.DapperExtensions.SqlDialect = new SqliteDialect();
 
             string dbFile = Path.Combine(Environment.CurrentDirectory, "n1mmlistener.db");
             var csb = new SqliteConnectionStringBuilder();
@@ -276,7 +286,7 @@ namespace n1mmlistener
         {
             using (var conn = GetConn())
             {
-                return conn.GetList<Contact>();
+                return conn.GetList<Contact>().ToArray();
             }
         }
 
@@ -286,7 +296,12 @@ namespace n1mmlistener
             {
                 var pg = new PredicateGroup { Operator = GroupOperator.And, Predicates = new List<IPredicate>() };
                 pg.Predicates.Add(Predicates.Field<Contact>(f => f.TimestampUtc, Operator.Eq, timestampUtc.ToString("yyyy-MM-dd HH:mm:ss")));
-                pg.Predicates.Add(Predicates.Field<Contact>(f => f.Call, Operator.Eq, call));
+
+                if (call != null)
+                {
+                    pg.Predicates.Add(Predicates.Field<Contact>(f => f.Call, Operator.Eq, call));
+                }
+
                 pg.Predicates.Add(Predicates.Field<Contact>(f => f.ContestNumber, Operator.Eq, contestNumber));
                 pg.Predicates.Add(Predicates.Field<Contact>(f => f.StationName, Operator.Eq, stationName));
                 return conn.GetList<Contact>(pg);
@@ -309,7 +324,11 @@ namespace n1mmlistener
                      call text,
                      stationName text,
                      contestNumber int
-                   );" }
+                   );" },
+            { 2, @"alter table contacts add column IsMultiplier1 integer;
+                   alter table contacts add column IsMultiplier2 integer;
+                   alter table contacts add column IsMultiplier3 integer;
+                   alter table contacts add column Band integer;" }
         };
 
         int GetSchemaVer()
@@ -398,9 +417,13 @@ namespace n1mmlistener
         public string Call { get; set; }
         public string StationName { get; set; }
         public int ContestNumber { get; set; }
+        public bool IsMultiplier1 { get; set; }
+        public bool IsMultiplier2 { get; set; }
+        public bool IsMultiplier3 { get; set; }
+        public int Band { get; set; }
     }
 
-    public class ContactMapper : ClassMapper<Contact>
+    /*public class ContactMapper : ClassMapper<Contact>
     {
         public ContactMapper()
         {
@@ -408,7 +431,7 @@ namespace n1mmlistener
             Map(m => m.TimestampUtc_dt).Ignore();
             AutoMap();
         }
-    }
+    }*/
 
     static class Extensions
     {
