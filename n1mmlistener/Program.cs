@@ -1,11 +1,14 @@
 ﻿using Dapper;
 using DapperExtensions;
+using DapperExtensions.Mapper;
+using DapperExtensions.Sql;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -13,7 +16,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Xml;
-using System.Diagnostics;
 
 namespace n1mmlistener
 {
@@ -259,7 +261,7 @@ namespace n1mmlistener
 
         public ContactRepo()
         {
-            //DapperExtensions.DapperExtensions.SqlDialect = new SqliteDialect();
+            DapperExtensions.DapperExtensions.SqlDialect = new SqliteDialect();
 
             string dbFile = Path.Combine(Environment.CurrentDirectory, "n1mmlistener.db");
             var csb = new SqliteConnectionStringBuilder();
@@ -423,7 +425,7 @@ namespace n1mmlistener
         public int Band { get; set; }
     }
 
-    /*public class ContactMapper : ClassMapper<Contact>
+    public class ContactMapper : ClassMapper<Contact>
     {
         public ContactMapper()
         {
@@ -431,7 +433,7 @@ namespace n1mmlistener
             Map(m => m.TimestampUtc_dt).Ignore();
             AutoMap();
         }
-    }*/
+    }
 
     static class Extensions
     {
