@@ -29,12 +29,16 @@ namespace n1mmlistener
             }
         }
 
-        public IEnumerable<ContactRow> GetList(DateTime timestampUtc, string call, int contestNumber, string stationName)
+        public IEnumerable<ContactRow> GetList(string call, int contestNumber, string stationName, DateTime? timestampUtc = null)
         {
             using (var conn = GetConn())
             {
                 var pg = new PredicateGroup { Operator = GroupOperator.And, Predicates = new List<IPredicate>() };
-                pg.Predicates.Add(Predicates.Field<ContactRow>(f => f.TimestampUtc, Operator.Eq, timestampUtc.ToString("yyyy-MM-dd HH:mm:ss")));
+
+                if (timestampUtc != null)
+                {
+                    pg.Predicates.Add(Predicates.Field<ContactRow>(f => f.TimestampUtc, Operator.Eq, timestampUtc.Value.ToString("yyyy-MM-dd HH:mm:ss")));
+                }
 
                 if (call != null)
                 {
@@ -43,7 +47,7 @@ namespace n1mmlistener
 
                 pg.Predicates.Add(Predicates.Field<ContactRow>(f => f.ContestNumber, Operator.Eq, contestNumber));
                 pg.Predicates.Add(Predicates.Field<ContactRow>(f => f.StationName, Operator.Eq, stationName));
-                return conn.GetList<ContactRow>(pg);
+                return conn.GetList<ContactRow>(pg).ToArray();
             }
         }
 

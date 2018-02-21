@@ -13,3 +13,5 @@
 /.vs/n1mmlistener/v15/Server/sqlite3/storage.ide-shm
 /.vs/n1mmlistener/v15/Server/sqlite3/storage.ide-wal
 /n1mmlistener/n1mmlistener.csproj.user
+/n1mmlistener/datagrams
+/n1mmlistener/n1mmlistener.log

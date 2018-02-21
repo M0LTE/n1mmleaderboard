@@ -71,31 +71,38 @@ namespace n1mmlistener
                     IPEndPoint receivedFrom = new IPEndPoint(IPAddress.Any, 0);
                     byte[] msg = listener.Receive(ref receivedFrom);
 
-                    Task.Factory.StartNew(() =>
+                    try
                     {
-                        try
-                        {
-                            ProcessDatagram(msg);
-                        }
-                        catch (Exception ex)
-                        {
-                            if (Debugger.IsAttached)
-                            {
-                                Debugger.Break();
-                            }
-
-                            Log("Uncaught exception: {0}", ex);
-                        }
-                    });
+                        ProcessDatagram(msg);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log("Uncaught exception: {0}", ex);
+                    }
                 }
             }
         }
 
         static void ProcessDatagram(byte[] msg)
         {
+            try
+            {
+                string rawFolder = Path.Combine(Environment.CurrentDirectory, "datagrams");
+                if (!Directory.Exists(rawFolder))
+                {
+                    Directory.CreateDirectory(rawFolder);
+                }
+                string rawFile = Path.Combine(rawFolder, string.Format("{0:yyyyMMdd-HHmmss.fff}.xml", DateTime.Now));
+                File.WriteAllBytes(rawFile, msg);
+            }
+            catch (Exception ex)
+            {
+                Log("Could not write datagram: {0}", ex);
+            }
+
             if (ContactInfo.TryParse(msg, out ContactInfo ci))
             {
-                ProcessContactInfo(ci);
+                ProcessContactAdd(ci);
             }
             else if (ContactReplace.TryParse(msg, out ContactReplace cr))
             {
@@ -162,22 +169,6 @@ namespace n1mmlistener
             return null;
         }
 
-        static void ProcessContactInfo(ContactInfo ci)
-        {
-            var contactRepo = new ContactRepo();
-
-            contactRepo.Add(Map(ci));
-
-            var opRow = State.SingleOrDefault(row => String.Equals(row.Op, ci.Operator.Trim(), StringComparison.OrdinalIgnoreCase));
-            if (opRow == null)
-            {
-                opRow = new LeaderboardRow { Op = ci.Operator.Trim().ToUpper() };
-                State.Add(opRow);
-            }
-
-            opRow.TotalQsos++;
-        }
-
         static ContactRow Map(ContactBase cb)
         {
             return new ContactRow
@@ -194,6 +185,15 @@ namespace n1mmlistener
             };
         }
 
+        static void ProcessContactAdd(ContactInfo ci)
+        {
+            var contactRepo = new ContactRepo();
+
+            contactRepo.Add(Map(ci));
+
+            GetRow(ci.Operator).TotalQsos++;
+        }
+
         static void ProcessContactDelete(ContactDelete cd)
         {
             var contactRepo = new ContactRepo();
@@ -204,7 +204,17 @@ namespace n1mmlistener
                 return;
             }
 
-            foreach (ContactRow c in contactRepo.GetList(dt, cd.Call, cd.Contestnr, cd.StationName).ToArray())
+            IEnumerable<ContactRow> search;
+            if (dt != new DateTime(1900, 1, 1, 0, 0, 0))
+            {
+                search = contactRepo.GetList(cd.Call, cd.Contestnr, cd.StationName, dt);
+            }
+            else
+            {
+                search = contactRepo.GetList(cd.Call, cd.Contestnr, cd.StationName, null);
+            }
+
+            foreach (ContactRow c in search.ToArray())
             {
                 string op = c.Operator;
                 contactRepo.Delete(c);
@@ -216,13 +226,14 @@ namespace n1mmlistener
         {
             var contactRepo = new ContactRepo();
 
+            /*
             if (DateTime.TryParse(cr.Timestamp, out DateTime contactTime))
             {
-                foreach (var contact in contactRepo.GetList(contactTime, null, cr.Contestnr, cr.StationName))
+                foreach (var contact in contactRepo.GetList(null, cr.Contestnr, cr.StationName, contactTime))
                 {
                     contactRepo.Delete(contact);
                 }
-            }
+            }*/
 
             contactRepo.Add(Map(cr));
 
@@ -231,16 +242,18 @@ namespace n1mmlistener
 
         internal static void Log(string format, params object[] args)
         {
-            Console.WriteLine(format, args);
+            lock (logLockObj)
+            {
+                Console.WriteLine(format, args);
+                File.AppendAllText("n1mmlistener.log", String.Concat(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff "), String.Format(format, args), Environment.NewLine));
+            }
         }
+
+        static object logLockObj = new object();
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
                 .Build();
     }
-
-    
-
-    
 }
