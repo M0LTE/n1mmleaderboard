@@ -137,13 +137,8 @@ namespace n1mmlistener
             }
         }
 
-        private static string GetRootElementName(string possibleXml)
+        static string GetRootElementName(string possibleXml)
         {
-            /*
-<?xml version="1.0" encoding="utf-8"?>
-<contactreplace> 
-            */
-
             try
             {
                 using (var stringReader = new StringReader(possibleXml))
@@ -199,7 +194,7 @@ namespace n1mmlistener
             };
         }
 
-        private static void ProcessContactDelete(ContactDelete cd)
+        static void ProcessContactDelete(ContactDelete cd)
         {
             var contactRepo = new ContactRepo();
 
