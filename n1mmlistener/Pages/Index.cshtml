@@ -1,0 +1,36 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <table id="leaderboard" class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Op</th>
+                    <th scope="col">QSOs</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+      $(document).ready(function() {
+          function refreshTable() {
+              $.getJSON("api/leaderboard", function (data) {
+                  var node = $("#leaderboard > tbody");
+                  node.find("tr").remove();
+                  jQuery.each(data, function (i, val) {
+                      var node = $("#leaderboard > tbody");
+                      node.append("<tr><td>" + val.op + "</td><td>" + val.totalQsos + "</td></tr>");
+                  });
+              });
+          }
+          setInterval(refreshTable, 1000);
+          refreshTable();
+      });
+</script>
