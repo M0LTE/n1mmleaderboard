@@ -224,15 +224,6 @@ namespace n1mmlistener
         {
             var contactRepo = new ContactRepo();
 
-            /*
-            if (DateTime.TryParse(cr.Timestamp, out DateTime contactTime))
-            {
-                foreach (var contact in contactRepo.GetList(null, cr.Contestnr, cr.StationName, contactTime))
-                {
-                    contactRepo.Delete(contact);
-                }
-            }*/
-
             contactRepo.Add(Map(cr));
 
             GetRow(cr.Operator).TotalQsos++;

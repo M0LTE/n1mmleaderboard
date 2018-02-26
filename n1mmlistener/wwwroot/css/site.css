@@ -1,9 +1,13 @@
 body {
     padding-top: 50px;
     padding-bottom: 20px;
-    background-color: black;
-    color:white;
-    font-size:5em;
+    background-color: #2E3035;
+    color: #fdfdfd;
+    
+}
+
+.embiggen {
+    font-size: 5em;
 }
 
 /* Wrapping element */
@@ -11,6 +15,8 @@ body {
 .body-content {
     padding-left: 15px;
     padding-right: 15px;
+    margin-top:15px;
+    background-color: #3A3D45;
 }
 
 /* Carousel */

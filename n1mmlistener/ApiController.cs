@@ -10,10 +10,26 @@ namespace n1mmlistener
     [Route("api")]
     public class ApiController : Controller
     {
-        [HttpGet("leaderboard")]
-        public IActionResult Get()
+        [HttpGet("leaderboard/{sort}")]
+        public IActionResult Get(string sort)
         {
-            return Ok(Program.State);
+            var list = Program.State;
+            LeaderboardRow[] sorted;
+
+            if (sort == nameof(LeaderboardRow.TotalQsos))
+            {
+                sorted = list.OrderByDescending(l => l.TotalQsos).ToArray();
+            }
+            else if (sort == nameof(LeaderboardRow.TotalIsMult1Contacts))
+            {
+                sorted = list.OrderByDescending(l => l.TotalIsMult1Contacts).ToArray();
+            }
+            else
+            {
+                sorted = list.ToArray();
+            }
+
+            return Ok(sorted);
         }
     }
 
@@ -21,5 +37,6 @@ namespace n1mmlistener
     {
         public string Op { get; set; }
         public int TotalQsos { get; set; }
+        public int TotalIsMult1Contacts { get; set; }
     }
 }

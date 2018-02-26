@@ -14,7 +14,7 @@ namespace n1mmsender
 <{re}>
 	<contestname>DXPEDITION</contestname>
 	<contestnr>10</contestnr>
-	<timestamp>2016-04-10 16:17:41</timestamp>
+	<timestamp>{ts}</timestamp>
 	<mycall>K8UT</mycall>
 	<band>21</band>
 	<rxfreq>2125500</rxfreq>
@@ -59,17 +59,18 @@ namespace n1mmsender
 
         const string xmldelete = @"<?xml version=""1.0"" encoding=""utf-8""?>
 <contactdelete>
-	<timestamp>2016-04-10 16:17:41</timestamp>
+	<timestamp>{ts}</timestamp>
 	<call>W2BBB</call>
 	<contestnr>10</contestnr>
 	<StationName>PHONE-15M</StationName>
 </contactdelete>";
 
+        static List<DateTime> dates = new List<DateTime>();
+
         static void Main(string[] args)
         {
             using (var client = new UdpClient("127.0.0.1", 12060))
             {
-                string xmlinfo = xmlSample.Replace("{re}", "contactinfo");
                 string xmlreplace = xmlSample.Replace("{re}", "contactreplace");
 
                 while (true)
@@ -83,7 +84,11 @@ namespace n1mmsender
 
                     if (cki.KeyChar == 'i')
                     {
-                        xml = xmlinfo;
+                        DateTime date = DateTime.Now;
+                        dates.Add(date);
+
+                        xml = xmlSample.Replace("{re}", "contactinfo")
+                                       .Replace("{ts}", date.ToString("yyyy-MM-dd HH:mm:ss"));
                     }
                     else if (cki.KeyChar == 'r')
                     {
@@ -91,7 +96,13 @@ namespace n1mmsender
                     }
                     else if (cki.KeyChar == 'd')
                     {
-                        xml = xmldelete;
+                        if (!dates.Any())
+                            continue;
+
+                        DateTime date = dates[new Random().Next(0, dates.Count)];
+                        dates.Remove(date);
+
+                        xml = xmldelete.Replace("{ts}", date.ToString("yyyy-MM-dd HH:mm:ss"));
                     }
                     else continue;
 

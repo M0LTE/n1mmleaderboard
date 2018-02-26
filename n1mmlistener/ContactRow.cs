@@ -8,31 +8,38 @@ namespace n1mmlistener
         public string Operator { get; set; }
 
         /// <summary>
-        /// This is for Dapper, get and set using TimestampUtc_dt instead
+        /// This is for SQLite, get and set using TimestampUtc_dt instead
         /// </summary>
-        public string TimestampUtc { get; set; }
-
-        public DateTime TimestampUtc_dt
+        public string TimestampUtc
         {
             get
             {
-                if (DateTime.TryParse(TimestampUtc, out DateTime result))
-                {
-                    return result;
-                }
-                return default(DateTime);
+                return TimestampUtc_dt.ToString("yyyy-MM-dd HH:mm:ss");
             }
             set
             {
-                TimestampUtc = value.ToString("yyyy-MM-dd HH:mm:ss");
+                if (DateTime.TryParse(value, out DateTime dt))
+                {
+                    TimestampUtc_dt = dt;
+                }
+                else
+                {
+                    TimestampUtc_dt = default(DateTime);
+                }
             }
         }
+
+        public DateTime TimestampUtc_dt { get; set; }
         public string Call { get; set; }
         public string StationName { get; set; }
         public int ContestNumber { get; set; }
         public bool IsMultiplier1 { get; set; }
         public bool IsMultiplier2 { get; set; }
         public bool IsMultiplier3 { get; set; }
+
+        /// <summary>
+        /// MHz
+        /// </summary>
         public int Band { get; set; }
     }
 }
