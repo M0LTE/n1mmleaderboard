@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace n1mmlistener
 {
-    public class ContactMapper : ClassMapper<ContactRow>
+    public class ContactMapper : ClassMapper<ContactDbRow>
     {
         public ContactMapper()
         {

@@ -16,46 +16,11 @@ namespace n1mmlistener
     {
         static Thread udpThread = new Thread(new ThreadStart(UdpThread));
 
-        public static List<LeaderboardRow> State = new List<LeaderboardRow>();
-        static LeaderboardRow GetRow(string op)
-        {
-            if (op == null)
-                throw new ArgumentNullException();
-
-            op = op.ToUpper().Trim();
-
-            var row = State.SingleOrDefault(r => String.Equals(r.Op, op));
-
-            if (row == null)
-            {
-                row = new LeaderboardRow { Op = op };
-                State.Add(row);
-            }
-
-            return row;
-        }
-
         public static void Main(string[] args)
         {
-            LoadState();
-
             udpThread.Start();
 
             BuildWebHost(args).Run();
-        }
-
-        static void LoadState()
-        {
-            ContactRepo repo = new ContactRepo();
-
-            var contacts = repo.GetList();
-
-            foreach (var contact in contacts)
-            {
-                LeaderboardRow row = GetRow(contact.Operator);
-
-                row.TotalQsos++;
-            }
         }
 
         static void UdpThread()
@@ -98,11 +63,11 @@ namespace n1mmlistener
                 Log("Could not write datagram: {0}", ex);
             }
 
-            if (ContactInfo.TryParse(msg, out ContactInfo ci))
+            if (N1mmXmlContactInfo.TryParse(msg, out N1mmXmlContactInfo ci))
             {
                 ProcessContactAdd(ci);
             }
-            else if (ContactReplace.TryParse(msg, out ContactReplace cr))
+            else if (N1mmXmlContactReplace.TryParse(msg, out N1mmXmlContactReplace cr))
             {
                 ProcessContactReplace(cr);
             }
@@ -110,7 +75,7 @@ namespace n1mmlistener
             {
                 ProcessContactDelete(cd);
             }
-            else
+            /*else
             {
                 string str;
                 try
@@ -139,7 +104,7 @@ namespace n1mmlistener
                 {
                     Log("Received whitespace");
                 }
-            }
+            }*/
         }
 
         static string GetRootElementName(string possibleXml)
@@ -167,9 +132,9 @@ namespace n1mmlistener
             return null;
         }
 
-        static ContactRow Map(ContactBase cb)
+        static ContactDbRow Map(N1mmXmlContactBase cb)
         {
-            return new ContactRow
+            return new ContactDbRow
             {
                 Call = cb.Call,
                 ContestNumber = cb.Contestnr,
@@ -183,18 +148,18 @@ namespace n1mmlistener
             };
         }
 
-        static void ProcessContactAdd(ContactInfo ci)
+        static void ProcessContactAdd(N1mmXmlContactInfo ci)
         {
-            var contactRepo = new ContactRepo();
+            var contactRepo = new ContactDbRepo();
 
-            contactRepo.Add(Map(ci));
+            ContactDbRow row = Map(ci);
 
-            GetRow(ci.Operator).TotalQsos++;
+            contactRepo.Add(row);
         }
 
         static void ProcessContactDelete(ContactDelete cd)
         {
-            var contactRepo = new ContactRepo();
+            var contactRepo = new ContactDbRepo();
 
             if (!DateTime.TryParse(cd.Timestamp, out DateTime dt))
             {
@@ -202,7 +167,7 @@ namespace n1mmlistener
                 return;
             }
 
-            IEnumerable<ContactRow> search;
+            IEnumerable<ContactDbRow> search;
             if (dt != new DateTime(1900, 1, 1, 0, 0, 0))
             {
                 search = contactRepo.GetList(cd.Call, cd.Contestnr, cd.StationName, dt);
@@ -212,21 +177,22 @@ namespace n1mmlistener
                 search = contactRepo.GetList(cd.Call, cd.Contestnr, cd.StationName, null);
             }
 
-            foreach (ContactRow c in search.ToArray())
+            foreach (ContactDbRow c in search.ToArray())
             {
                 string op = c.Operator;
                 contactRepo.Delete(c);
-                GetRow(op).TotalQsos--;
             }
         }
 
-        private static void ProcessContactReplace(ContactReplace cr)
+        static void ProcessContactReplace(N1mmXmlContactReplace cr)
         {
-            var contactRepo = new ContactRepo();
+            var contactRepo = new ContactDbRepo();
 
-            contactRepo.Add(Map(cr));
+            throw new NotImplementedException();
 
-            GetRow(cr.Operator).TotalQsos++;
+            ContactDbRow row = Map(cr);
+
+            contactRepo.Add(row);
         }
 
         internal static void Log(string format, params object[] args)

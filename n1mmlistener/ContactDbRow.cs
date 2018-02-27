@@ -2,7 +2,7 @@
 
 namespace n1mmlistener
 {
-    public class ContactRow
+    public class ContactDbRow
     {
         public int ID { get; set; }
         public string Operator { get; set; }

@@ -6,14 +6,14 @@ using System.Linq;
 
 namespace n1mmlistener
 {
-    public class ContactRepo
+    public class ContactDbRepo
     {
-        public ContactRepo()
+        public ContactDbRepo()
         {
             SchemaMgr.Init();
         }
 
-        public void Add(ContactRow c)
+        public void Add(ContactDbRow c)
         {
             using (var conn = GetConn())
             {
@@ -21,15 +21,15 @@ namespace n1mmlistener
             }
         }
 
-        public IEnumerable<ContactRow> GetList()
+        public IEnumerable<ContactDbRow> GetList()
         {
             using (var conn = GetConn())
             {
-                return conn.GetList<ContactRow>().ToArray();
+                return conn.GetList<ContactDbRow>().ToArray();
             }
         }
 
-        public IEnumerable<ContactRow> GetList(string call, int contestNumber, string stationName, DateTime? timestampUtc = null)
+        public IEnumerable<ContactDbRow> GetList(string call, int contestNumber, string stationName, DateTime? timestampUtc = null)
         {
             using (var conn = GetConn())
             {
@@ -37,21 +37,23 @@ namespace n1mmlistener
 
                 if (timestampUtc != null)
                 {
-                    pg.Predicates.Add(Predicates.Field<ContactRow>(f => f.TimestampUtc, Operator.Eq, timestampUtc.Value.ToString("yyyy-MM-dd HH:mm:ss")));
+                    pg.Predicates.Add(Predicates.Field<ContactDbRow>(f => f.TimestampUtc, Operator.Eq, timestampUtc.Value.ToString("yyyy-MM-dd HH:mm:ss")));
                 }
 
                 if (call != null)
                 {
-                    pg.Predicates.Add(Predicates.Field<ContactRow>(f => f.Call, Operator.Eq, call));
+                    pg.Predicates.Add(Predicates.Field<ContactDbRow>(f => f.Call, Operator.Eq, call));
                 }
 
-                pg.Predicates.Add(Predicates.Field<ContactRow>(f => f.ContestNumber, Operator.Eq, contestNumber));
-                pg.Predicates.Add(Predicates.Field<ContactRow>(f => f.StationName, Operator.Eq, stationName));
-                return conn.GetList<ContactRow>(pg).ToArray();
+                pg.Predicates.Add(Predicates.Field<ContactDbRow>(f => f.ContestNumber, Operator.Eq, contestNumber));
+
+                pg.Predicates.Add(Predicates.Field<ContactDbRow>(f => f.StationName, Operator.Eq, stationName));
+
+                return conn.GetList<ContactDbRow>(pg).ToArray();
             }
         }
 
-        public void Delete(ContactRow c)
+        public void Delete(ContactDbRow c)
         {
             using (var conn = GetConn())
             {

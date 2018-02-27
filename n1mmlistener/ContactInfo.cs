@@ -6,9 +6,9 @@ using System.Xml.Serialization;
 namespace n1mmlistener
 {
     [XmlRoot(ElementName = "contactreplace")]
-    public class ContactReplace : ContactBase
+    public class N1mmXmlContactReplace : N1mmXmlContactBase
     {
-        public static bool TryParse(byte[] datagram, out ContactReplace contactReplace)
+        public static bool TryParse(byte[] datagram, out N1mmXmlContactReplace contactReplace)
         {
             string str;
             try
@@ -24,10 +24,10 @@ namespace n1mmlistener
 
             try
             {
-                var serialiser = new XmlSerializer(typeof(ContactReplace));
+                var serialiser = new XmlSerializer(typeof(N1mmXmlContactReplace));
                 using (var reader = new StringReader(str))
                 {
-                    contactReplace = (ContactReplace)serialiser.Deserialize(reader);
+                    contactReplace = (N1mmXmlContactReplace)serialiser.Deserialize(reader);
                 }
             }
             catch (Exception ex)
@@ -42,9 +42,9 @@ namespace n1mmlistener
     }
 
     [XmlRoot(ElementName = "contactinfo")]
-    public class ContactInfo : ContactBase
+    public class N1mmXmlContactInfo : N1mmXmlContactBase
     {
-        public static bool TryParse(byte[] datagram, out ContactInfo contactInfo)
+        public static bool TryParse(byte[] datagram, out N1mmXmlContactInfo contactInfo)
         {
             string str;
             try
@@ -60,10 +60,10 @@ namespace n1mmlistener
 
             try
             {
-                var serialiser = new XmlSerializer(typeof(ContactInfo));
+                var serialiser = new XmlSerializer(typeof(N1mmXmlContactInfo));
                 using (var reader = new StringReader(str))
                 {
-                    contactInfo = (ContactInfo)serialiser.Deserialize(reader);
+                    contactInfo = (N1mmXmlContactInfo)serialiser.Deserialize(reader);
                 }
             }
             catch (Exception ex)
@@ -77,7 +77,7 @@ namespace n1mmlistener
         }
     }
 
-    public class ContactBase
+    public class N1mmXmlContactBase
     {
         [XmlElement(ElementName = "contestname")]
         public string Contestname { get; set; }

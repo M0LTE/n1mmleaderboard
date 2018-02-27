@@ -8,7 +8,7 @@ namespace n1mmlistener
     [XmlRoot(ElementName = "contactreplace")]
     public class ContactReplace1
     {
-        public static bool TryParse(byte[] datagram, out ContactReplace contactReplace)
+        public static bool TryParse(byte[] datagram, out N1mmXmlContactReplace contactReplace)
         {
             string str;
             try
@@ -24,10 +24,10 @@ namespace n1mmlistener
 
             try
             {
-                var serialiser = new XmlSerializer(typeof(ContactReplace));
+                var serialiser = new XmlSerializer(typeof(N1mmXmlContactReplace));
                 using (var reader = new StringReader(str))
                 {
-                    contactReplace = (ContactReplace)serialiser.Deserialize(reader);
+                    contactReplace = (N1mmXmlContactReplace)serialiser.Deserialize(reader);
                 }
             }
             catch (Exception ex)
