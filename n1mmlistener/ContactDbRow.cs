@@ -40,6 +40,6 @@ namespace n1mmlistener
         /// <summary>
         /// MHz
         /// </summary>
-        public int Band { get; set; }
+        public double Band { get; set; }
     }
 }

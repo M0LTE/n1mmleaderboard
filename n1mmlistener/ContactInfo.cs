@@ -88,7 +88,7 @@ namespace n1mmlistener
         [XmlElement(ElementName = "mycall")]
         public string Mycall { get; set; }
         [XmlElement(ElementName = "band")]
-        public int Band { get; set; }
+        public double Band { get; set; }
         [XmlElement(ElementName = "rxfreq")]
         public string Rxfreq { get; set; }
         [XmlElement(ElementName = "txfreq")]

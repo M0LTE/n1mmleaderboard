@@ -35,13 +35,7 @@
                 jQuery.each(data, function (i, val) {
                     var node = $("#leaderboard > tbody");
 
-                    var h = "<tr><td>" + val.op + "</td><td>";
-                    if (measure == "TotalQsos") {
-                        h += val.totalQsos;
-                    } else if (measure == "TotalIsMult1Contacts") {
-                        h += val.totalIsMult1Contacts;
-                    }
-                    h += "</td></tr>";
+                    var h = "<tr><td>" + val.operator + "</td><td>" + val.count + "</td></tr>";
 
                     node.append(h);
                 });
