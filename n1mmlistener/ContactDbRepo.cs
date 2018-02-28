@@ -61,7 +61,7 @@ namespace n1mmlistener
             }
         }
 
-        public IEnumerable<ContactDbRow> GetList(string call, int contestNumber, string stationName, DateTime? timestampUtc = null)
+        internal IEnumerable<ContactDbRow> GetList(DateTime contactTime, string stationName)
         {
             lock (lockObj)
             {
@@ -69,17 +69,7 @@ namespace n1mmlistener
                 {
                     var pg = new PredicateGroup { Operator = GroupOperator.And, Predicates = new List<IPredicate>() };
 
-                    if (timestampUtc != null)
-                    {
-                        pg.Predicates.Add(Predicates.Field<ContactDbRow>(f => f.TimestampUtc, Operator.Eq, timestampUtc.Value.ToString("yyyy-MM-dd HH:mm:ss")));
-                    }
-
-                    if (call != null)
-                    {
-                        pg.Predicates.Add(Predicates.Field<ContactDbRow>(f => f.Call, Operator.Eq, call));
-                    }
-
-                    pg.Predicates.Add(Predicates.Field<ContactDbRow>(f => f.ContestNumber, Operator.Eq, contestNumber));
+                    pg.Predicates.Add(Predicates.Field<ContactDbRow>(f => f.TimestampUtc, Operator.Eq, contactTime.ToString("yyyy-MM-dd HH:mm:ss")));
 
                     pg.Predicates.Add(Predicates.Field<ContactDbRow>(f => f.StationName, Operator.Eq, stationName));
 

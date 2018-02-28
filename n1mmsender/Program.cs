@@ -59,10 +59,10 @@ namespace n1mmsender
 
         const string xmldelete = @"<?xml version=""1.0"" encoding=""utf-8""?>
 <contactdelete>
-	<timestamp>{ts}</timestamp>
-	<call>W2BBB</call>
-	<contestnr>10</contestnr>
-	<StationName>PHONE-15M</StationName>
+	<timestamp>2018-02-27 21:33:54</timestamp>
+	<call>M0AAA</call>
+	<contestnr>0</contestnr>
+	<StationName>DESKTOP-BLFHI3S</StationName>
 </contactdelete>";
 
         static List<DateTime> dates = new List<DateTime>();
@@ -96,13 +96,7 @@ namespace n1mmsender
                     }
                     else if (cki.KeyChar == 'd')
                     {
-                        if (!dates.Any())
-                            continue;
-
-                        DateTime date = dates[new Random().Next(0, dates.Count)];
-                        dates.Remove(date);
-
-                        xml = xmldelete.Replace("{ts}", date.ToString("yyyy-MM-dd HH:mm:ss"));
+                        xml = xmldelete;
                     }
                     else continue;
 

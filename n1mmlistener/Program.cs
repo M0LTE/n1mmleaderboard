@@ -254,28 +254,28 @@ namespace n1mmlistener
 
         static void ProcessContactDelete(ContactDelete cd)
         {
+            DeleteContact(cd.Timestamp, cd.StationName);
+        }
+
+        static void DeleteContact(string n1mmTimestamp, string stationName)
+        { 
             var contactRepo = new ContactDbRepo();
 
-            if (!DateTime.TryParse(cd.Timestamp, out DateTime dt))
+            // search for which contact to delete by station name and timestamp
+            if (DateTime.TryParse(n1mmTimestamp, out DateTime ts))
             {
-                Log($"Invalid DateTime {dt}, failed to delete (Call={cd.Call}, Contestnr={cd.Contestnr}, StationName={cd.StationName}");
-                return;
-            }
+                if (ts != new DateTime(1900, 1, 1, 0, 0, 0))
+                {
+                    if (!string.IsNullOrWhiteSpace(stationName))
+                    {
+                        var contacts = contactRepo.GetList(contactTime: ts, stationName: stationName);
 
-            IEnumerable<ContactDbRow> search;
-            if (dt != new DateTime(1900, 1, 1, 0, 0, 0))
-            {
-                search = contactRepo.GetList(cd.Call, cd.Contestnr, cd.StationName, dt);
-            }
-            else
-            {
-                search = contactRepo.GetList(cd.Call, cd.Contestnr, cd.StationName, null);
-            }
-
-            foreach (ContactDbRow c in search.ToArray())
-            {
-                string op = c.Operator;
-                contactRepo.Delete(c);
+                        foreach (var contact in contacts)
+                        {
+                            contactRepo.Delete(contact);
+                        }
+                    }
+                }
             }
         }
 
@@ -283,7 +283,7 @@ namespace n1mmlistener
         {
             var contactRepo = new ContactDbRepo();
 
-            throw new NotImplementedException();
+            DeleteContact(cr.Timestamp, cr.StationName);
 
             ContactDbRow row = Map(cr);
 
