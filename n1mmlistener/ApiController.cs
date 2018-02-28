@@ -1,9 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-
+using System.Diagnostics;
 
 namespace n1mmlistener
 {
@@ -15,7 +12,9 @@ namespace n1mmlistener
         {
             var repo = new ContactDbRepo();
 
+            var sw = Stopwatch.StartNew();
             List<LeaderboardRow> list = repo.GetTotalQsoLeaderboard();
+            Request.HttpContext.Response.Headers.Add("X-Db-Took-ms", sw.ElapsedMilliseconds.ToString());
 
             return Ok(list);
         }
@@ -25,7 +24,9 @@ namespace n1mmlistener
         {
             var repo = new ContactDbRepo();
 
+            var sw = Stopwatch.StartNew();
             List<LeaderboardRow> list = repo.GetIsMulti1Leaderboard();
+            Request.HttpContext.Response.Headers.Add("X-Db-Took-ms", sw.ElapsedMilliseconds.ToString());
 
             return Ok(list);
         }

@@ -1,11 +1,12 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Leaderboard";
 }
 
 <div class="row">
     <div class="col-md-12">
+        <span id="lastUpdate" style="color:yellow; font-size:20pt; font-weight:bold;"></span>
         <table id="leaderboard" class="table embiggen">
             <thead>
                 <tr>
@@ -16,7 +17,7 @@
             <tbody></tbody>
         </table>
         <a href="javascript:;" id="byTotalQso">By total QSOs</a> |
-        <a href="javascript:;" id="byMult1">By mult 1</a>
+        <a href="javascript:;" id="byMult1">By mult 1</a><br />
     </div>
 </div>
 
@@ -25,10 +26,21 @@
     var mult1Title = "State-band mults";
 
     var measure;
+    var lastUpdate;
 
     $(document).ready(function () {
         function refreshTable() {
-              
+            if (lastUpdate) {
+                var msSince = Date.now() - lastUpdate;
+                if (msSince > 10000) {
+                    var warn = "No update for " + msSince + "ms";
+                    console.log(warn);
+                    $("#lastUpdate").html(warn);
+                } else {
+                    $("#lastUpdate").html("");
+                }
+            }
+
             $.getJSON("api/leaderboard/" + measure, function (data) {
                 var node = $("#leaderboard > tbody");
                 node.find("tr").remove();
@@ -39,6 +51,8 @@
 
                     node.append(h);
                 });
+
+                lastUpdate = Date.now();
             });
         }
 

@@ -50,7 +50,7 @@ namespace n1mmlistener
 
         internal List<LeaderboardRow> GetIsMulti1Leaderboard()
         {
-            return GetLeaderboard("select operator, count(1) as count from contacts where ismultiplier1 = 'true' group by operator order by count desc, operator");
+            return GetLeaderboard("select operator, count(1) as count from contacts where ismultiplier1 = 1 group by operator order by count desc, operator");
         }
 
         public IEnumerable<ContactDbRow> GetList()

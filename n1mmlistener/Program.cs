@@ -19,6 +19,13 @@ namespace n1mmlistener
 
         public static void Main(string[] args)
         {
+            udpThread.Start();
+
+            BuildWebHost(args).Run();
+        }
+
+        static void MakeUpRandomData()
+        {
             var repo = new ContactDbRepo();
             var calls = new[] { "M0LTE", "2E0XLX", "G4RDC", "2E0JPM", "2E1EPQ" };
             var bands = new[] { 21, 14, 7, 3.5, 1.8 };
@@ -39,10 +46,6 @@ namespace n1mmlistener
                     TimestampUtc_dt = dt
                 });
             }
-            return;
-            udpThread.Start();
-
-            BuildWebHost(args).Run();
         }
 
         static Random rnd = new Random();
