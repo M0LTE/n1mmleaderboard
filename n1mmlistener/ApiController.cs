@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -14,7 +15,7 @@ namespace n1mmlistener
 
             var sw = Stopwatch.StartNew();
             List<LeaderboardRow> list = repo.GetTotalQsoLeaderboard();
-            Request.HttpContext.Response.Headers.Add("X-Db-Took-ms", sw.ElapsedMilliseconds.ToString());
+            InsertHeader(sw);
 
             return Ok(list);
         }
@@ -26,11 +27,41 @@ namespace n1mmlistener
 
             var sw = Stopwatch.StartNew();
             List<LeaderboardRow> list = repo.GetIsMulti1Leaderboard();
-            Request.HttpContext.Response.Headers.Add("X-Db-Took-ms", sw.ElapsedMilliseconds.ToString());
+            InsertHeader(sw);
 
             return Ok(list);
         }
+
+        [HttpGet("leaderboard/qsorate/{mins}")]
+        public IActionResult GetQsoRateLeaderboard(int mins)
+        {
+            var repo = new ContactDbRepo();
+
+            var sw = Stopwatch.StartNew();
+            List<LeaderboardRow> list = repo.GetQsoRateLeaderboard(mins);
+            InsertHeader(sw);
+
+            return Ok(list);
+        }
+
+        [HttpGet("leaderboard/qsopeak")]
+        public IActionResult GetPeakRateLeaderboard()
+        {
+            var repo = new ContactDbRepo();
+
+            var sw = Stopwatch.StartNew();
+            List<LeaderboardRow> list = repo.GetPeakRateLeaderboard();
+            InsertHeader(sw);
+
+            return Ok(list);
+        }
+
+        void InsertHeader(Stopwatch sw)
+        {
+            Request.HttpContext.Response.Headers.Add("X-Crunching-Time-ms", sw.ElapsedMilliseconds.ToString());
+        }
     }
+
 
     public class LeaderboardRow
     {

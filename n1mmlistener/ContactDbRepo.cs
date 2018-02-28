@@ -53,11 +53,83 @@ namespace n1mmlistener
             return GetLeaderboard("select operator, count(1) as count from contacts where ismultiplier1 = 1 group by operator order by count desc, operator");
         }
 
+        internal List<LeaderboardRow> GetQsoRateLeaderboard(int mins)
+        {
+            return GetLeaderboard($@"select operator, count(1) * {60 / mins} as count from contacts 
+where timestamputc > datetime('now', '-{mins} minutes')
+and timestamputc <= datetime('now')
+group by operator
+order by count desc, operator");
+        }
+
+        const int peakCalculationWindowLengthInSecs = 1;
+        const int peakLengthMins = 5;
+        internal List<LeaderboardRow> GetPeakRateLeaderboard()
+        {
+            var data = GetList();
+
+            if (!data.Any())
+            {
+                return new List<LeaderboardRow>();
+            }
+
+            DateTime firstQso = data.Min(row => row.TimestampUtc_dt);
+            DateTime lastQso = data.Max(row => row.TimestampUtc_dt);
+
+            int secs = (int)(lastQso - firstQso).TotalSeconds;
+
+            Dictionary<string, int> leaderboard = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+
+            Dictionary<string, int> windowLeaderboard = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+
+            for (int i = 0; i < secs; i += peakCalculationWindowLengthInSecs)
+            {
+                DateTime windowStart = firstQso.AddSeconds(i);
+                DateTime windowEnd = windowStart.AddMinutes(peakLengthMins);
+
+                IEnumerable<ContactDbRow> window = data.Where(row => row.TimestampUtc_dt >= windowStart
+                                                                  && row.TimestampUtc_dt < windowEnd);
+
+                windowLeaderboard.Clear();
+
+                foreach (ContactDbRow row in window)
+                {
+                    if (!windowLeaderboard.ContainsKey(row.Operator))
+                    {
+                        windowLeaderboard.Add(row.Operator, 0);
+                    }
+
+                    windowLeaderboard[row.Operator]++;
+                }
+
+                foreach (var kvp in windowLeaderboard)
+                {
+                    if (!leaderboard.ContainsKey(kvp.Key))
+                    {
+                        leaderboard.Add(kvp.Key, 0);
+                    }
+
+                    if (windowLeaderboard[kvp.Key] > leaderboard[kvp.Key])
+                    {
+                        leaderboard[kvp.Key] = windowLeaderboard[kvp.Key];
+                    }
+                }
+            }
+
+            var result = leaderboard
+                .Select(kvp => new LeaderboardRow { Operator = kvp.Key, Count = kvp.Value })
+                .OrderByDescending(lb => lb.Count)
+                .ThenBy(lb => lb.Operator)
+                .ToList();
+
+            return result;
+        }
+
         public IEnumerable<ContactDbRow> GetList()
         {
             using (var conn = GetConn())
             {
-                return conn.GetList<ContactDbRow>().ToArray();
+                return conn.Query<ContactDbRow>("select id, operator, timestampUTC, call, stationName, contestNumber, IsMultiplier1, IsMultiplier2, IsMultiplier3, cast(band as real) Band from contacts;").ToArray();
             }
         }
 

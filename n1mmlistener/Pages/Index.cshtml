@@ -10,29 +10,38 @@
         <table id="leaderboard" class="table embiggen">
             <thead>
                 <tr>
-                    <th scope="col">Op</th>
-                    <th scope="col" id="measureTitle"></th>
+                    <th scope="col" style="font-size:50%;">Op</th>
+                    <th scope="col" id="measureTitle" style="font-size:50%;"></th>
                 </tr>
             </thead>
             <tbody></tbody>
         </table>
         <a href="javascript:;" id="byTotalQso">By total QSOs</a> |
-        <a href="javascript:;" id="byMult1">By mult 1</a><br />
+        <a href="javascript:;" id="byMult1">By mult 1</a> |
+        <a href="javascript:;" id="rateShort">Live QSO rate (short)</a> |
+        <a href="javascript:;" id="rateLong">Live QSO rate (long)</a> |
+        <a href="javascript:;" id="ratePeak">Peak 5 min QSO count</a>
     </div>
 </div>
 
 <script type="text/javascript">
     var totalqsosTitle = "QSOs";
-    var mult1Title = "State-band mults";
+    var mult1Title = "Unique state-bands (mults)";
+    var qsoRateShortTitle = "Last 5 min QSO rate";
+    var qsoRateLongTitle = "Last hour QSO rate";
+    var qsoRatePeakTitle = "Peak 5 min QSO count";
 
     var measure;
     var lastUpdate;
+    var intervalID;
+    var requestingNow = false;
+    var suffix = "";
 
     $(document).ready(function () {
         function refreshTable() {
             if (lastUpdate) {
                 var msSince = Date.now() - lastUpdate;
-                if (msSince > 10000) {
+                if (measure != "qsopeak" && msSince > 10000) {
                     var warn = "No update for " + msSince + "ms";
                     console.log(warn);
                     $("#lastUpdate").html(warn);
@@ -41,37 +50,66 @@
                 }
             }
 
-            $.getJSON("api/leaderboard/" + measure, function (data) {
-                var node = $("#leaderboard > tbody");
-                node.find("tr").remove();
-                jQuery.each(data, function (i, val) {
+            if (!requestingNow) {
+                requestingNow = true;
+                $.getJSON("api/leaderboard/" + measure, function (data) {
                     var node = $("#leaderboard > tbody");
+                    node.find("tr").remove();
+                    jQuery.each(data, function (i, val) {
+                        var node = $("#leaderboard > tbody");
 
-                    var h = "<tr><td>" + val.operator + "</td><td>" + val.count + "</td></tr>";
+                        var h = "<tr><td>" + val.operator + "</td><td>" + val.count + " " + suffix + "</td></tr>";
 
-                    node.append(h);
+                        node.append(h);
+                    });
+                    lastUpdate = Date.now();
+                }).always(function () {
+                    requestingNow = false;
                 });
-
-                lastUpdate = Date.now();
-            });
+            }
         }
 
         // initial view
         measure = "TotalQsos";
         $('#measureTitle').html(totalqsosTitle);
 
-        setInterval(refreshTable, 1000);
+        intervalID = setInterval(refreshTable, 1000);
         refreshTable();
         
         $('#byTotalQso').on('click', function () { 
             measure = "TotalQsos";
+            suffix = "";
             $('#measureTitle').html(totalqsosTitle);
             refreshTable();
         });
 
         $('#byMult1').on('click', function () {
             measure = "TotalIsMult1Contacts";
+            suffix = "";
             $('#measureTitle').html(mult1Title);
+            refreshTable();
+        });
+
+        $('#rateShort').on('click', function () {
+            measure = "qsorate/5";
+            suffix = "/hr";
+            $('#measureTitle').html(qsoRateShortTitle);
+            refreshTable();
+        });
+
+        $('#rateLong').on('click', function () {
+            measure = "qsorate/60";
+            suffix = "/hr";
+            $('#measureTitle').html(qsoRateLongTitle);
+            refreshTable();
+        });
+
+        $('#ratePeak').on('click', function () {
+            measure = "qsopeak";
+            suffix = "";
+            $('#measureTitle').html(qsoRatePeakTitle);
+            var node = $("#leaderboard > tbody");
+            node.find("tr").remove();
             refreshTable();
         });
 

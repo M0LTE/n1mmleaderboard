@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -19,6 +17,12 @@ namespace n1mmlistener
 
         public static void Main(string[] args)
         {
+            if (false)
+            {
+                MakeUpRandomData();
+                Debugger.Break();
+            }
+
             udpThread.Start();
 
             BuildWebHost(args).Run();
@@ -27,9 +31,13 @@ namespace n1mmlistener
         static void MakeUpRandomData()
         {
             var repo = new ContactDbRepo();
+            foreach (var contact in repo.GetList())
+            {
+                repo.Delete(contact);
+            }
+
             var calls = new[] { "M0LTE", "2E0XLX", "G4RDC", "2E0JPM", "2E1EPQ" };
             var bands = new[] { 21, 14, 7, 3.5, 1.8 };
-
 
             for (int i = 0; i < 10000; i++)
             {
@@ -49,7 +57,6 @@ namespace n1mmlistener
         }
 
         static Random rnd = new Random();
-
 
         static char GetRandomLetter()
         {
@@ -258,13 +265,13 @@ namespace n1mmlistener
         }
 
         static void DeleteContact(string n1mmTimestamp, string stationName)
-        { 
+        {
             var contactRepo = new ContactDbRepo();
 
             // search for which contact to delete by station name and timestamp
             if (DateTime.TryParse(n1mmTimestamp, out DateTime ts))
             {
-                if (ts != new DateTime(1900, 1, 1, 0, 0, 0))
+                if (ts != new DateTime(1900, 1, 1, 0, 0, 0)) // for some reason n1mm passes us this in some circumstances, no idea what we're supposed to do with it
                 {
                     if (!string.IsNullOrWhiteSpace(stationName))
                     {
