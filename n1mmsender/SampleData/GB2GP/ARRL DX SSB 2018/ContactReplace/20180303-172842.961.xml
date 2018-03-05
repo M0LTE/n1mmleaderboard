@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<contactreplace>
+	<contestname>ARRLDXSSB</contestname>
+	<contestnr>6</contestnr>
+	<timestamp>2018-03-03 08:04:57</timestamp>
+	<mycall>M0BPQ</mycall>
+	<band>7</band>
+	<rxfreq>715930</rxfreq>
+	<txfreq>715930</txfreq>
+	<operator>2E0XLX</operator>
+	<mode>LSB</mode>
+	<call>AA1K</call>
+	<countryprefix>K</countryprefix>
+	<wpxprefix>AA1</wpxprefix>
+	<stationprefix>M0BPQ</stationprefix>
+	<continent>NA</continent>
+	<snt>59</snt>
+	<sntnr>36</sntnr>
+	<rcv>59</rcv>
+	<rcvnr>0</rcvnr>
+	<gridsquare> </gridsquare>
+	<exchange1></exchange1>
+	<section>DE</section>
+	<comment></comment>
+	<qth></qth>
+	<name></name>
+	<power></power>
+	<misctext> </misctext>
+	<zone>5</zone>
+	<prec></prec>
+	<ck>0</ck>
+	<ismultiplier1>1</ismultiplier1>
+	<ismultiplier2>0</ismultiplier2>
+	<ismultiplier3>0</ismultiplier3>
+	<points>3</points>
+	<radionr>1</radionr>
+	<RoverLocation> </RoverLocation>
+	<RadioInterfaced>1</RadioInterfaced>
+	<NetworkedCompNr>0</NetworkedCompNr>
+	<IsOriginal>True</IsOriginal>
+	<NetBiosName>LAPTOP-O0NMJLJK</NetBiosName>
+	<IsRunQSO>0</IsRunQSO>
+	<StationName>LAPTOP-O0NMJLJK</StationName>
+</contactreplace>

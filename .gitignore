@@ -16,3 +16,4 @@
 /n1mmlistener/datagrams
 /n1mmlistener/n1mmlistener.log
 /.vs
+/n1mmsender/n1mmemu.csproj.user
