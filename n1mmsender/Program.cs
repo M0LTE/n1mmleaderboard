@@ -55,6 +55,8 @@ namespace n1mmsender
 -l  | --list-datasets  List the available embedded datasets
 -d= | --dataset=       The dataset to send
 -h  | --help           Show this text
+
+Example: n1mmsender.exe -d=ARRL_DX_SSB_2018 --ip=broadcast
 ");
                 return 0;
             }
