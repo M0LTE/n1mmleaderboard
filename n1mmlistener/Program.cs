@@ -252,11 +252,17 @@ namespace n1mmlistener
 
         static void ProcessContactAdd(N1mmXmlContactInfo ci)
         {
-            var contactRepo = new ContactDbRepo();
+            if (ci.IsOriginal == "True") // True = contact was originated on this computer. Without this check, in a multiple n1mm scenario, 
+            {                            // if this computer has All QSOs selected, we will receive the contact twice. We only want
+                                         // the one from the PC on which the contact was logged. This does mean every n1mm instance
+                                         // will need to be configured to send datagrams to us. That seems reasonable.
 
-            ContactDbRow row = Map(ci);
+                var contactRepo = new ContactDbRepo();
 
-            contactRepo.Add(row);
+                ContactDbRow row = Map(ci);
+
+                contactRepo.Add(row);
+            }
         }
 
         static void ProcessContactDelete(ContactDelete cd)
@@ -288,13 +294,19 @@ namespace n1mmlistener
 
         static void ProcessContactReplace(N1mmXmlContactReplace cr)
         {
-            var contactRepo = new ContactDbRepo();
+            if (cr.IsOriginal == "True") // True = contact was originated on this computer. Without this check, in a multiple n1mm scenario, 
+            {                            // if this computer has All QSOs selected, we will receive the contact twice. We only want
+                                         // the one from the PC on which the contact was logged. This does mean every n1mm instance
+                                         // will need to be configured to send datagrams to us. That seems reasonable.
 
-            DeleteContact(cr.Timestamp, cr.StationName);
+                var contactRepo = new ContactDbRepo();
 
-            ContactDbRow row = Map(cr);
+                DeleteContact(cr.Timestamp, cr.StationName);
 
-            contactRepo.Add(row);
+                ContactDbRow row = Map(cr);
+
+                contactRepo.Add(row);
+            }
         }
 
         internal static void Log(string format, params object[] args)
