@@ -26,7 +26,7 @@
 
 <script type="text/javascript">
     var totalqsosTitle = "QSOs";
-    var mult1Title = "Unique state-bands (mults)";
+    var mult1Title = "Mults";
     var qsoRateShortTitle = "Last 5 min QSO rate";
     var qsoRateLongTitle = "Last hour QSO rate";
     var qsoRatePeakTitle = "Peak 5 min QSO count";
@@ -37,81 +37,100 @@
     var requestingNow = false;
     var suffix = "";
 
-    $(document).ready(function () {
-        function refreshTable() {
-            if (lastUpdate) {
-                var msSince = Date.now() - lastUpdate;
-                if (measure != "qsopeak" && msSince > 10000) {
-                    var warn = "No update for " + msSince + "ms";
-                    console.log(warn);
-                    $("#lastUpdate").html(warn);
-                } else {
-                    $("#lastUpdate").html("");
-                }
-            }
+    function switchToTotalQsos() {
+        measure = "TotalQsos";
+        suffix = "";
+        setTitle(totalqsosTitle);
+        refreshTable();
+    }
 
-            if (!requestingNow) {
-                requestingNow = true;
-                $.getJSON("api/leaderboard/" + measure, function (data) {
-                    var node = $("#leaderboard > tbody");
-                    node.find("tr").remove();
-                    jQuery.each(data, function (i, val) {
-                        var node = $("#leaderboard > tbody");
+    function switchToMult1 () {
+        measure = "TotalIsMult1Contacts";
+        suffix = "";
+        setTitle(mult1Title);
+        refreshTable();
+    }
 
-                        var h = "<tr><td>" + val.operator + "</td><td>" + val.count + " " + suffix + "</td></tr>";
+    function switchToRateShort () {
+        measure = "qsorate/5";
+        suffix = "/hr";
+        setTitle(qsoRateShortTitle);
+        refreshTable();
+    }
 
-                        node.append(h);
-                    });
-                    lastUpdate = Date.now();
-                }).always(function () {
-                    requestingNow = false;
-                });
+    function switchToRateLong () {
+        measure = "qsorate/60";
+        suffix = "/hr";
+        setTitle(qsoRateLongTitle);
+        refreshTable();
+    }
+
+    function switchToRatePeak () {
+        measure = "qsopeak";
+        suffix = "";
+        setTitle(qsoRatePeakTitle);
+        removeRows();
+        refreshTable();
+    }
+
+    function removeRows() {
+        var node = $("#leaderboard > tbody");
+        node.find("tr").remove();
+    }
+
+    function setTitle(title) {
+        $('#measureTitle').html(title);
+    }
+
+    function refreshTable() {
+        if (lastUpdate) {
+            var msSince = Date.now() - lastUpdate;
+            if (measure != "qsopeak" && msSince > 10000) {
+                var warn = "No update for " + msSince + "ms";
+                console.log(warn);
+                $("#lastUpdate").html(warn);
+            } else {
+                $("#lastUpdate").html("");
             }
         }
+
+        if (!requestingNow) {
+            requestingNow = true;
+            $.getJSON("api/leaderboard/" + measure, function (data) {
+                removeRows();
+                jQuery.each(data, function (i, val) {
+                    var node = $("#leaderboard > tbody");
+
+                    var h = "<tr><td>" + val.operator + "</td><td>" + val.count + " " + suffix + "</td></tr>";
+
+                    node.append(h);
+                });
+                lastUpdate = Date.now();
+            }).always(function () {
+                requestingNow = false;
+            });
+        }
+    }
+
+    $(document).ready(function () {
 
         // initial view
         measure = "TotalQsos";
         $('#measureTitle').html(totalqsosTitle);
 
         intervalID = setInterval(refreshTable, 1000);
+
         refreshTable();
         
-        $('#byTotalQso').on('click', function () { 
-            measure = "TotalQsos";
-            suffix = "";
-            $('#measureTitle').html(totalqsosTitle);
-            refreshTable();
-        });
+        $('#byTotalQso').on('click', switchToTotalQsos);
 
-        $('#byMult1').on('click', function () {
-            measure = "TotalIsMult1Contacts";
-            suffix = "";
-            $('#measureTitle').html(mult1Title);
-            refreshTable();
-        });
+        $('#byMult1').on('click', switchToMult1);
 
-        $('#rateShort').on('click', function () {
-            measure = "qsorate/5";
-            suffix = "/hr";
-            $('#measureTitle').html(qsoRateShortTitle);
-            refreshTable();
-        });
+        $('#rateShort').on('click', switchToRateShort);
 
-        $('#rateLong').on('click', function () {
-            measure = "qsorate/60";
-            suffix = "/hr";
-            $('#measureTitle').html(qsoRateLongTitle);
-            refreshTable();
-        });
+        $('#rateLong').on('click', switchToRateLong);
 
-        $('#ratePeak').on('click', function () {
-            measure = "qsopeak";
-            suffix = "";
-            $('#measureTitle').html(qsoRatePeakTitle);
-            var node = $("#leaderboard > tbody");
-            node.find("tr").remove();
-            refreshTable();
-        });
+        $('#ratePeak').on('click', switchToRatePeak);
 
         /*number of qsos per op
             number of qsos per band per op
