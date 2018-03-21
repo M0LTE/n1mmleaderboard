@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
+VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "n1mmlistener", "n1mmlistener\n1mmlistener.csproj", "{71628DEF-D949-4A14-8FEA-7B94102E889D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "leaderboard-web", "leaderboard-web\leaderboard-web.csproj", "{71628DEF-D949-4A14-8FEA-7B94102E889D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "n1mmemu", "n1mmsender\n1mmemu.csproj", "{3250B3A3-9DCD-4768-B67B-F1074769C787}"
 EndProject

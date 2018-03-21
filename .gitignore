@@ -17,3 +17,8 @@
 /n1mmlistener/n1mmlistener.log
 /.vs
 /n1mmsender/n1mmemu.csproj.user
+/leaderboard-web/obj
+/leaderboard-web/bin
+/leaderboard-web/datagrams
+/leaderboard-web/n1mmlistener.db
+/leaderboard-web/n1mmlistener.log
