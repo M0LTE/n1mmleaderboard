@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
+using n1mm_leaderboard_shared;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -62,10 +62,4 @@ namespace n1mmlistener
         }
     }
 
-
-    public class LeaderboardRow
-    {
-        public string Operator { get; set; }
-        public int Count { get; set; }
-    }
 }

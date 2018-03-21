@@ -22,3 +22,10 @@
 /leaderboard-web/datagrams
 /leaderboard-web/n1mmlistener.db
 /leaderboard-web/n1mmlistener.log
+/bin
+/leaderboard-web/Properties/PublishProfiles/FolderProfile.pubxml.user
+/leaderboard-web/leaderboard-web.csproj.user
+/n1mm-udp-listener/obj
+/n1mm-udp-listener/bin
+/n1mm-leaderboard-shared/obj
+/n1mm-leaderboard-shared/bin

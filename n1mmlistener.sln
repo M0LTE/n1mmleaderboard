@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "n1mmemu", "n1mmsender\n1mme
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DapperExtensionsDNC", "DapperExtensionsDNC\DapperExtensionsDNC.csproj", "{B1640EE4-C3E8-4947-AED2-0D43812FCCF8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "n1mm-udp-listener", "n1mm-udp-listener\n1mm-udp-listener.csproj", "{918B9CE7-38FE-4770-85FC-38454454FE2A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "n1mm-leaderboard-shared", "n1mm-leaderboard-shared\n1mm-leaderboard-shared.csproj", "{2421D3A2-6E6D-4F11-AE5D-CC7FF518F4F8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{B1640EE4-C3E8-4947-AED2-0D43812FCCF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B1640EE4-C3E8-4947-AED2-0D43812FCCF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B1640EE4-C3E8-4947-AED2-0D43812FCCF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{918B9CE7-38FE-4770-85FC-38454454FE2A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{918B9CE7-38FE-4770-85FC-38454454FE2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{918B9CE7-38FE-4770-85FC-38454454FE2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{918B9CE7-38FE-4770-85FC-38454454FE2A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2421D3A2-6E6D-4F11-AE5D-CC7FF518F4F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2421D3A2-6E6D-4F11-AE5D-CC7FF518F4F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2421D3A2-6E6D-4F11-AE5D-CC7FF518F4F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2421D3A2-6E6D-4F11-AE5D-CC7FF518F4F8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

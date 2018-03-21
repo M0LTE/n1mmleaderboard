@@ -1,4 +1,5 @@
 ﻿using DapperExtensions.Mapper;
+using n1mm_leaderboard_shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;

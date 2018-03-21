@@ -7,7 +7,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 
-namespace n1mmlistener
+namespace n1mm_leaderboard_shared
 {
     public static class SchemaMgr
     {

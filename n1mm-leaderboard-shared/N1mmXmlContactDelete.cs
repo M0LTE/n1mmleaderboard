@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Xml.Serialization;
 
-namespace n1mmlistener
+namespace n1mm_leaderboard_shared
 {
     [XmlRoot(ElementName = "contactdelete")]
     public class ContactDelete
@@ -17,7 +18,7 @@ namespace n1mmlistener
             }
             catch (Exception ex)
             {
-                Program.Log("Exception: {0}", ex);
+                Log("Exception: {0}", ex);
                 contactDelete = null;
                 return false;
             }
@@ -32,12 +33,17 @@ namespace n1mmlistener
             }
             catch (Exception ex)
             {
-                Program.Log("Exception: {0}", ex);
+                Log("Exception: {0}", ex);
                 contactDelete = null;
                 return false;
             }
 
             return true;
+        }
+
+        static void Log(string format, params object[] args)
+        {
+            Trace.WriteLine(string.Format(format, args));
         }
 
         [XmlElement(ElementName = "timestamp")]

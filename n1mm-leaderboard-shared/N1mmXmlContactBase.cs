@@ -1,82 +1,10 @@
 ﻿using System;
-using System.IO;
+using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
 
-namespace n1mmlistener
+namespace n1mm_leaderboard_shared
 {
-    [XmlRoot(ElementName = "contactreplace")]
-    public class N1mmXmlContactReplace : N1mmXmlContactBase
-    {
-        public static bool TryParse(byte[] datagram, out N1mmXmlContactReplace contactReplace)
-        {
-            string str;
-            try
-            {
-                str = Encoding.UTF8.GetString(datagram);
-            }
-            catch (Exception ex)
-            {
-                Program.Log("Exception: {0}", ex);
-                contactReplace = null;
-                return false;
-            }
-
-            try
-            {
-                var serialiser = new XmlSerializer(typeof(N1mmXmlContactReplace));
-                using (var reader = new StringReader(str))
-                {
-                    contactReplace = (N1mmXmlContactReplace)serialiser.Deserialize(reader);
-                }
-            }
-            catch (Exception ex)
-            {
-                Program.Log("Exception: {0}", ex);
-                contactReplace = null;
-                return false;
-            }
-
-            return true;
-        }
-    }
-
-    [XmlRoot(ElementName = "contactinfo")]
-    public class N1mmXmlContactInfo : N1mmXmlContactBase
-    {
-        public static bool TryParse(byte[] datagram, out N1mmXmlContactInfo contactInfo)
-        {
-            string str;
-            try
-            {
-                str = Encoding.UTF8.GetString(datagram);
-            }
-            catch (Exception ex)
-            {
-                Program.Log("Exception: {0}", ex);
-                contactInfo = null;
-                return false;
-            }
-
-            try
-            {
-                var serialiser = new XmlSerializer(typeof(N1mmXmlContactInfo));
-                using (var reader = new StringReader(str))
-                {
-                    contactInfo = (N1mmXmlContactInfo)serialiser.Deserialize(reader);
-                }
-            }
-            catch (Exception ex)
-            {
-                Program.Log("Exception: {0}", ex);
-                contactInfo = null;
-                return false;
-            }
-
-            return true;
-        }
-    }
-
     public class N1mmXmlContactBase
     {
         [XmlElement(ElementName = "contestname")]
@@ -166,5 +94,4 @@ namespace n1mmlistener
         [XmlElement(ElementName = "StationName")]
         public string StationName { get; set; }
     }
-
 }
