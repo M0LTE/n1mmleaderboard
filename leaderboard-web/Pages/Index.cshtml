@@ -112,6 +112,20 @@
         }
     }
 
+    var viewMethods = [switchToTotalQsos, switchToMult1, switchToRateShort, switchToRateLong, switchToRatePeak];
+
+    var viewNum = 0;
+
+    function switchView(){
+        if (viewNum == viewMethods.length - 1) {
+            viewNum = 0;
+        } else {
+            viewNum++;
+        }
+
+        viewMethods[viewNum]();
+    }
+
     $(document).ready(function () {
 
         // initial view
@@ -131,6 +145,8 @@
         $('#rateLong').on('click', switchToRateLong);
 
         $('#ratePeak').on('click', switchToRatePeak);
+
+        setInterval(switchView, 5000);
 
         /*number of qsos per op
             number of qsos per band per op

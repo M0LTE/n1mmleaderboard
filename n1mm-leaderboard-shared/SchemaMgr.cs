@@ -27,11 +27,11 @@ namespace n1mm_leaderboard_shared
             conn.Open();
             return conn;
         }
-        internal static void Init()
+        internal static void Init(string dbFile)
         {
             DapperExtensions.DapperExtensions.SqlDialect = new SqliteDialect();
 
-            string dbFile = Path.Combine(Environment.CurrentDirectory, "n1mmlistener.db");
+            //string dbFile = Path.Combine(Environment.CurrentDirectory, "n1mmlistener.db");
             var csb = new SqliteConnectionStringBuilder();
             csb.DataSource = dbFile;
             connectionString = csb.ToString();

@@ -12,11 +12,11 @@ namespace n1mm_leaderboard_shared
     {
         static object lockObj = new object();
 
-        public ContactDbRepo()
+        public ContactDbRepo(string pathToDb = null)
         {
             lock (lockObj)
             {
-                SchemaMgr.Init();
+                SchemaMgr.Init(pathToDb ?? Environment.GetEnvironmentVariable("dashdb"));
             }
         }
 

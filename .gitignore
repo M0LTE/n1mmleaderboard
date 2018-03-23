@@ -29,3 +29,6 @@
 /n1mm-udp-listener/bin
 /n1mm-leaderboard-shared/obj
 /n1mm-leaderboard-shared/bin
+/n1mm-udp-listener/datagrams
+/*.db
+/n1mm-udp-listener/*.db

@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Reflection;
+using System.Threading;
 
 namespace n1mmsender
 {
@@ -15,7 +16,7 @@ namespace n1mmsender
     {
         static int Main(string[] args)
         {
-            string ip = null;
+            string ip = "broadcast";
             int port = 12060;
             bool help = false;
             bool listDatasets = false;
@@ -77,8 +78,21 @@ Example: n1mmsender.exe -d=ARRL_DX_SSB_2018 --ip=broadcast
             IPAddress ipaddr;
             if (ip == "broadcast")
             {
-                UnicastIPAddressInformation nip = GetNicIP();
-                ipaddr = GetBroadcastAddress(nip);
+                UnicastIPAddressInformation[] nips = GetNicIP();
+                if (nips.Length > 1)
+                {
+                    Console.WriteLine("Not sure which NIC to broadcast on, specify with --ip=[ip address]");
+                    return -1;
+                }
+                else if (nips.Length == 0)
+                {
+                    Console.WriteLine("Could not work out broadcast address, specify with --ip=[ip address]");
+                    return -1;
+                }
+                else
+                {
+                    ipaddr = GetBroadcastAddress(nips[0]);
+                }
             }
             else if (!IPAddress.TryParse(ip, out ipaddr))
             {
@@ -120,6 +134,8 @@ Example: n1mmsender.exe -d=ARRL_DX_SSB_2018 --ip=broadcast
                         stream.CopyTo(ms);
                         byte[] buf = ms.ToArray();
                         client.Send(buf, buf.Length, ipep);
+                        Console.WriteLine("Sending " + buf.Length + " bytes");
+                        Thread.Sleep(1000); // crude but ok for testing
                     }
                 }
             }
@@ -127,8 +143,10 @@ Example: n1mmsender.exe -d=ARRL_DX_SSB_2018 --ip=broadcast
             return 0;
         }
 
-        public static UnicastIPAddressInformation GetNicIP()
+        public static UnicastIPAddressInformation[] GetNicIP()
         {
+            var result = new List<UnicastIPAddressInformation>();
+
             foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
             {
                 if (ni.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 || ni.NetworkInterfaceType == NetworkInterfaceType.Ethernet)
@@ -139,13 +157,13 @@ Example: n1mmsender.exe -d=ARRL_DX_SSB_2018 --ip=broadcast
                         //IPv4InterfaceProperties p = adapterProperties.GetIPv4Properties();
                         if (uipi.Address.AddressFamily == AddressFamily.InterNetwork && !uipi.Address.ToString().StartsWith("169.254."))
                         {
-                            return uipi;
+                            result.Add(uipi);
                         }
                     }
                 }
             }
 
-            return default(UnicastIPAddressInformation);
+            return result.ToArray();
         }
 
         public static IPAddress GetBroadcastAddress(UnicastIPAddressInformation unicastAddress)

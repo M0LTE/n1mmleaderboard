@@ -1,9 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using DapperExtensions.Mapper;
+using System;
 
 namespace n1mm_leaderboard_shared
 {
+    public class ContactMapper : ClassMapper<ContactDbRow>
+    {
+        public ContactMapper()
+        {
+            Table("Contacts");
+            Map(m => m.TimestampUtc_dt).Ignore();
+            AutoMap();
+        }
+    }
+
     public class ContactDbRow
     {
         public int ID { get; set; }

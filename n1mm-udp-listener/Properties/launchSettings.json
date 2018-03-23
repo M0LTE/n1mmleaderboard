@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "n1mm-udp-listener": {
+      "commandName": "Project",
+      "commandLineArgs": "C:\\dev\\n1mmleaderboard\\mydb.db"
+    }
+  }
+}

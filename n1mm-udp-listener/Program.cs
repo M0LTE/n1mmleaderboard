@@ -11,8 +11,18 @@ namespace n1mm_udp_listener
     {
         static bool OnlyProcessOriginals;
 
+        static string pathToDb;
+
         static void Main(string[] args)
         {
+            if (args.Length != 1 || !Directory.Exists(Path.GetDirectoryName(args[0])))
+            {
+                Console.WriteLine("Expected a full path to the database file");
+                return;
+            }
+
+            pathToDb = args[0];
+
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json");
@@ -55,16 +65,19 @@ namespace n1mm_udp_listener
                 if (N1mmXmlContactInfo.TryParse(msg, out N1mmXmlContactInfo ci))
                 {
                     isAdd = true;
+                    Console.WriteLine($"Adding a contact: {ci.Call}");
                     ProcessContactAdd(ci);
                 }
                 else if (N1mmXmlContactReplace.TryParse(msg, out N1mmXmlContactReplace cr))
                 {
                     isReplace = true;
+                    Console.WriteLine($"Replacing a contact: {cr.Call}");
                     ProcessContactReplace(cr);
                 }
                 else if (ContactDelete.TryParse(msg, out ContactDelete cd))
                 {
                     isDelete = true;
+                    Console.WriteLine($"Deleting a contact: {cd.Call}");
                     ProcessContactDelete(cd);
                 }
             }
@@ -156,7 +169,7 @@ namespace n1mm_udp_listener
                                          // the one from the PC on which the contact was logged. This does mean every n1mm instance
                                          // will need to be configured to send datagrams to us. That seems reasonable.
 
-                var contactRepo = new ContactDbRepo();
+                var contactRepo = new ContactDbRepo(pathToDb);
 
                 ContactDbRow row = Mappers.Map(ci);
 
@@ -171,7 +184,7 @@ namespace n1mm_udp_listener
 
         static void DeleteContact(string n1mmTimestamp, string stationName)
         {
-            var contactRepo = new ContactDbRepo();
+            var contactRepo = new ContactDbRepo(pathToDb);
 
             // search for which contact to delete by station name and timestamp
             if (DateTime.TryParse(n1mmTimestamp, out DateTime ts))
@@ -198,7 +211,7 @@ namespace n1mm_udp_listener
                                          // the one from the PC on which the contact was logged. This does mean every n1mm instance
                                          // will need to be configured to send datagrams to us. That seems reasonable.
 
-                var contactRepo = new ContactDbRepo();
+                var contactRepo = new ContactDbRepo(pathToDb);
 
                 DeleteContact(cr.Timestamp, cr.StationName);
 
