@@ -56,6 +56,18 @@ namespace n1mmlistener
             return Ok(list);
         }
 
+        [HttpGet("leaderboard/sincelastqso")]
+        public IActionResult GetSinceLastQsoLeaderboard()
+        {
+            var repo = new ContactDbRepo();
+
+            var sw = Stopwatch.StartNew();
+            List<LeaderboardRow> list = repo.GetSinceLastQsoLeaderboard();
+            InsertHeader(sw);
+
+            return Ok(list);
+        }
+
         void InsertHeader(Stopwatch sw)
         {
             Request.HttpContext.Response.Headers.Add("X-Crunching-Time-ms", sw.ElapsedMilliseconds.ToString());

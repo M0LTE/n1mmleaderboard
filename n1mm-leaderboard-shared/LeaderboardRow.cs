@@ -3,6 +3,6 @@
     public class LeaderboardRow
     {
         public string Operator { get; set; }
-        public int Count { get; set; }
+        public string Count { get; set; }
     }
 }

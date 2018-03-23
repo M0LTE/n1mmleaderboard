@@ -63,6 +63,19 @@ group by operator
 order by count desc, operator");
         }
 
+        public List<LeaderboardRow> GetSinceLastQsoLeaderboard()
+        {
+            var lb = GetLeaderboard("select operator, (julianday('now') - julianday(max(timestampUTC)))*24 count from contacts group by operator order by count asc");
+
+            foreach (var row in lb)
+            {
+                var ts = TimeSpan.FromHours(double.Parse(row.Count));
+                row.Count = String.Format("{0:0}:{1:00}", Math.Floor(ts.TotalHours), ts.Minutes);
+            }
+
+            return lb;
+        }
+
         const int peakCalculationWindowLengthInSecs = 1;
         const int peakLengthMins = 5;
         public List<LeaderboardRow> GetPeakRateLeaderboard()
@@ -118,7 +131,7 @@ order by count desc, operator");
             }
 
             var result = leaderboard
-                .Select(kvp => new LeaderboardRow { Operator = kvp.Key, Count = kvp.Value })
+                .Select(kvp => new LeaderboardRow { Operator = kvp.Key, Count = kvp.Value.ToString() })
                 .OrderByDescending(lb => lb.Count)
                 .ThenBy(lb => lb.Operator)
                 .ToList();

@@ -20,7 +20,8 @@
         <a href="javascript:;" id="byMult1">By mult 1</a> |
         <a href="javascript:;" id="rateShort">Live QSO rate (short)</a> |
         <a href="javascript:;" id="rateLong">Live QSO rate (long)</a> |
-        <a href="javascript:;" id="ratePeak">Peak 5 min QSO count</a>
+        <a href="javascript:;" id="ratePeak">Peak 5 min QSO count</a> |
+        <a href="javascript:;" id="sinceLastQso">Time since last QSO</a>
     </div>
 </div>
 
@@ -30,6 +31,7 @@
     var qsoRateShortTitle = "Last 5 min QSO rate";
     var qsoRateLongTitle = "Last hour QSO rate";
     var qsoRatePeakTitle = "Peak 5 min QSO count";
+    var sinceLastQsoTitle = "Since last QSO";
 
     var measure;
     var lastUpdate;
@@ -73,6 +75,14 @@
         refreshTable();
     }
 
+    function switchToSinceLastQso() {
+        measure = "sincelastqso";
+        suffix = "";
+        setTitle(sinceLastQsoTitle);
+        removeRows();
+        refreshTable();
+    }
+
     function removeRows() {
         var node = $("#leaderboard > tbody");
         node.find("tr").remove();
@@ -112,7 +122,7 @@
         }
     }
 
-    var viewMethods = [switchToTotalQsos, switchToMult1, switchToRateShort, switchToRateLong, switchToRatePeak];
+    var viewMethods = [switchToTotalQsos, switchToMult1, switchToRateShort, switchToRateLong, switchToRatePeak, switchToSinceLastQso];
 
     var viewNum = 0;
 
@@ -146,7 +156,9 @@
 
         $('#ratePeak').on('click', switchToRatePeak);
 
-        setInterval(switchView, 5000);
+        $('#sinceLastQso').on('click', switchToSinceLastQso);
+
+        setInterval(switchView, 60000);
 
         /*number of qsos per op
             number of qsos per band per op
