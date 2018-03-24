@@ -65,19 +65,19 @@ namespace n1mm_udp_listener
                 if (N1mmXmlContactInfo.TryParse(msg, out N1mmXmlContactInfo ci))
                 {
                     isAdd = true;
-                    Console.WriteLine($"Adding a contact: {ci.Call}");
+                    //Console.WriteLine($"Adding a contact: {ci.Call}");
                     ProcessContactAdd(ci);
                 }
                 else if (N1mmXmlContactReplace.TryParse(msg, out N1mmXmlContactReplace cr))
                 {
                     isReplace = true;
-                    Console.WriteLine($"Replacing a contact: {cr.Call}");
+                    //Console.WriteLine($"Replacing a contact: {cr.Call}");
                     ProcessContactReplace(cr);
                 }
                 else if (ContactDelete.TryParse(msg, out ContactDelete cd))
                 {
                     isDelete = true;
-                    Console.WriteLine($"Deleting a contact: {cd.Call}");
+                    //Console.WriteLine($"Deleting a contact: {cd.Call}");
                     ProcessContactDelete(cd);
                 }
             }
@@ -169,16 +169,24 @@ namespace n1mm_udp_listener
                                          // the one from the PC on which the contact was logged. This does mean every n1mm instance
                                          // will need to be configured to send datagrams to us. That seems reasonable.
 
+                Console.WriteLine($"Adding a contact: {ci.Call}  / {ci.Operator}");
+
                 var contactRepo = new ContactDbRepo(pathToDb);
 
                 ContactDbRow row = Mappers.Map(ci);
 
                 contactRepo.Add(row);
             }
+            else
+            {
+                Console.WriteLine($"Skipping a non-original contact: {ci.Call} / {ci.Operator}");
+            }
         }
 
         static void ProcessContactDelete(ContactDelete cd)
         {
+            Console.WriteLine($"Deleting a contact: {cd.Call}");
+
             DeleteContact(cd.Timestamp, cd.StationName);
         }
 
@@ -211,6 +219,8 @@ namespace n1mm_udp_listener
                                          // the one from the PC on which the contact was logged. This does mean every n1mm instance
                                          // will need to be configured to send datagrams to us. That seems reasonable.
 
+                Console.WriteLine($"Replacing a contact: {cr.Call} / {cr.Operator}");
+
                 var contactRepo = new ContactDbRepo(pathToDb);
 
                 DeleteContact(cr.Timestamp, cr.StationName);
@@ -218,6 +228,10 @@ namespace n1mm_udp_listener
                 ContactDbRow row = Mappers.Map(cr);
 
                 contactRepo.Add(row);
+            }
+            else
+            {
+                Console.WriteLine($"Skipping a replace (non-original): {cr.Call} / {cr.Operator}");
             }
         }
     }

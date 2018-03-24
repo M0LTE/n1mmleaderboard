@@ -132,7 +132,7 @@ order by count desc, operator");
 
             var result = leaderboard
                 .Select(kvp => new LeaderboardRow { Operator = kvp.Key, Count = kvp.Value.ToString() })
-                .OrderByDescending(lb => lb.Count)
+                .OrderByDescending(lb => int.Parse(lb.Count))
                 .ThenBy(lb => lb.Operator)
                 .ToList();
 

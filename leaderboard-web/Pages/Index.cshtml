@@ -28,7 +28,7 @@
 <script type="text/javascript">
     var totalqsosTitle = "QSOs";
     var mult1Title = "Mults";
-    var qsoRateShortTitle = "Last 5 min QSO rate";
+    var qsoRateShortTitle = "Last 15 min QSO rate";
     var qsoRateLongTitle = "Last hour QSO rate";
     var qsoRatePeakTitle = "Peak 5 min QSO count";
     var sinceLastQsoTitle = "Since last QSO";
@@ -56,7 +56,7 @@
     }
 
     function switchToRateShort () {
-        measure = "qsorate/5";
+        measure = "qsorate/15";
         suffix = "/hr";
         removeRows();
         setTitle(qsoRateShortTitle);
