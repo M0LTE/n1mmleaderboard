@@ -70,7 +70,7 @@ order by count desc, operator");
             foreach (var row in lb)
             {
                 var ts = TimeSpan.FromHours(double.Parse(row.Count));
-                row.Count = String.Format("{0:0}:{1:00}", Math.Floor(ts.TotalHours), ts.Minutes);
+                row.Count = String.Format("{0:0}:{1:00}:{2:00}", Math.Floor(ts.TotalHours), ts.Minutes, ts.Seconds);
             }
 
             return lb;

@@ -42,6 +42,7 @@
     function switchToTotalQsos() {
         measure = "TotalQsos";
         suffix = "";
+        removeRows();
         setTitle(totalqsosTitle);
         refreshTable();
     }
@@ -49,6 +50,7 @@
     function switchToMult1 () {
         measure = "TotalIsMult1Contacts";
         suffix = "";
+        removeRows();
         setTitle(mult1Title);
         refreshTable();
     }
@@ -56,6 +58,7 @@
     function switchToRateShort () {
         measure = "qsorate/5";
         suffix = "/hr";
+        removeRows();
         setTitle(qsoRateShortTitle);
         refreshTable();
     }
@@ -63,6 +66,7 @@
     function switchToRateLong () {
         measure = "qsorate/60";
         suffix = "/hr";
+        removeRows();
         setTitle(qsoRateLongTitle);
         refreshTable();
     }
@@ -70,6 +74,7 @@
     function switchToRatePeak () {
         measure = "qsopeak";
         suffix = "";
+        removeRows();
         setTitle(qsoRatePeakTitle);
         removeRows();
         refreshTable();
@@ -78,6 +83,7 @@
     function switchToSinceLastQso() {
         measure = "sincelastqso";
         suffix = "";
+        removeRows();
         setTitle(sinceLastQsoTitle);
         removeRows();
         refreshTable();
