@@ -33,7 +33,52 @@ namespace n1mm_leaderboard_shared
 
         public List<LeaderboardRow> GetTotalQsoLeaderboard()
         {
-            return GetLeaderboard("select operator, count(1) as count from contacts group by operator order by count desc, operator");
+            return GetLeaderboard(@"select 'Total' as operator, sum(1) as count from contacts
+union select operator, count(1) as count from contacts group by operator order by count desc, operator");
+        }
+
+        public List<LeaderboardRow> GetPointsLeaderboard()
+        {
+            return GetLeaderboard(@"select 0 ord, 'Total' operator, sum(points) * (select count(1) from contacts where ismultiplier1=1) count from contacts
+union select 1 ord, operator, sum(points) * (select count(1) from contacts c1 where ismultiplier1=1) from contacts group by operator
+order by ord, count desc");
+        }
+
+        public List<LeaderboardRow> GetBandStats()
+        {
+            return GetLeaderboard(@"select 'Total' as Operator, sum(1) as Count, 0 ord from contacts union
+select case when band=3.5 then '80m'
+                      when band=7 then '40m' 
+					  when band=14 then '20m' 
+					  when band=21 then '15m'
+					  when band=28 then '10m'
+					  when band=50 then '6m'
+					  else band end band,
+                 count(1), 1 ord from contacts group by band order by ord asc, band;");
+        }
+
+        public List<LeaderboardRow> GetSeatStatus()
+        {
+            return GetLeaderboard(@"with stations (stationName) as (
+  select distinct stationName from contacts),
+stationFreqs (operator, stationName, band, timestampUtc) as (
+  select (select operator from contacts c where c.stationName=stations.stationName order by timestamputc desc limit 1) band,
+        stationName, 
+       (select band from contacts c where c.stationName=stations.stationName order by timestamputc desc limit 1) band,
+	   (select timestampUtc from contacts c where c.stationName=stations.stationName order by timestamputc desc limit 1) timestampUtc
+  from stations),
+stationBandsTS (operator, stationName, band, timestampUtc) as (
+  select operator, stationName, case
+    when band=3.5 then '80m'
+    when band=7 then '40m'
+    when band=14 then '20m'
+    when band=21 then '15m'
+    when band=28 then '10m'
+    when band=50 then '6m'
+  else cast(band as text) end band,
+  timestampUtc 
+  from stationFreqs)
+select operator || ' @ ' || stationName as operator, cast(band as text) || ' @ ' || time(timestampUtc) as count from stationBandsTS");
         }
 
         public List<LeaderboardRow> GetLeaderboard(string sql)
@@ -51,7 +96,8 @@ namespace n1mm_leaderboard_shared
 
         public List<LeaderboardRow> GetIsMulti1Leaderboard()
         {
-            return GetLeaderboard("select operator, count(1) as count from contacts where ismultiplier1 = 1 group by operator order by count desc, operator");
+            return GetLeaderboard(@"select 'Total' as operator, sum(1) as count from contacts where ismultiplier1 = 1 union
+select operator, count(1) as count from contacts where ismultiplier1 = 1 group by operator order by count desc, operator");
         }
 
         public List<LeaderboardRow> GetQsoRateLeaderboard(int mins)

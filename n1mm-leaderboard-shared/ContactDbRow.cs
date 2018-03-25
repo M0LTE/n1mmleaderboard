@@ -52,5 +52,7 @@ namespace n1mm_leaderboard_shared
         /// MHz
         /// </summary>
         public double Band { get; set; }
+
+        public int Points { get; set; }
     }
 }

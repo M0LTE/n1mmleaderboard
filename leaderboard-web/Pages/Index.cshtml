@@ -16,28 +16,42 @@
             </thead>
             <tbody></tbody>
         </table>
+        <a href="javascript:;" id="points">Points</a> |
         <a href="javascript:;" id="byTotalQso">By total QSOs</a> |
         <a href="javascript:;" id="byMult1">By mult 1</a> |
         <a href="javascript:;" id="rateShort">Live QSO rate (short)</a> |
         <a href="javascript:;" id="rateLong">Live QSO rate (long)</a> |
         <a href="javascript:;" id="ratePeak">Peak 5 min QSO count</a> |
-        <a href="javascript:;" id="sinceLastQso">Time since last QSO</a>
+        <a href="javascript:;" id="sinceLastQso">Time since last QSO</a> |
+        <a href="javascript:;" id="bandstats">Band stats</a> |
+        <a href="javascript:;" id="radiostats">Radio stats</a>
     </div>
 </div>
 
 <script type="text/javascript">
+    var pointsTitle = "Points";
     var totalqsosTitle = "QSOs";
     var mult1Title = "Mults";
     var qsoRateShortTitle = "Last 15 min QSO rate";
     var qsoRateLongTitle = "Last hour QSO rate";
     var qsoRatePeakTitle = "Peak 5 min QSO count";
     var sinceLastQsoTitle = "Since last QSO";
+    var bandstatsTitle = "Contacts";
+    var radiostatsTitle = "Band @@ timestamp";
 
     var measure;
     var lastUpdate;
     var intervalID;
     var requestingNow = false;
     var suffix = "";
+
+    function switchToPoints() {
+        measure = "Points";
+        suffix = "";
+        removeRows();
+        setTitle(pointsTitle);
+        refreshTable();
+    }
 
     function switchToTotalQsos() {
         measure = "TotalQsos";
@@ -66,7 +80,6 @@
     function switchToRateLong () {
         measure = "qsorate/60";
         suffix = "/hr";
-        removeRows();
         setTitle(qsoRateLongTitle);
         refreshTable();
     }
@@ -74,7 +87,6 @@
     function switchToRatePeak () {
         measure = "qsopeak";
         suffix = "";
-        removeRows();
         setTitle(qsoRatePeakTitle);
         removeRows();
         refreshTable();
@@ -83,8 +95,23 @@
     function switchToSinceLastQso() {
         measure = "sincelastqso";
         suffix = "";
-        removeRows();
         setTitle(sinceLastQsoTitle);
+        removeRows();
+        refreshTable();
+    }
+
+    function switchToBandStats() {
+        measure = "bandstats";
+        suffix = "";
+        setTitle(bandstatsTitle);
+        removeRows();
+        refreshTable();
+    }
+
+    function switchToRadioStats() {
+        measure = "radiostats";
+        suffix = "";
+        setTitle(radiostatsTitle);
         removeRows();
         refreshTable();
     }
@@ -114,10 +141,18 @@
             requestingNow = true;
             $.getJSON("api/leaderboard/" + measure, function (data) {
                 removeRows();
+
+                var styl = "";
+                if (measure == "radiostats") {
+                    styl = " style=\"font-size:0.65em; font-weight:normal;\"";
+                }
+
                 jQuery.each(data, function (i, val) {
                     var node = $("#leaderboard > tbody");
 
-                    var h = "<tr><td>" + val.operator + "</td><td>" + val.count + " " + suffix + "</td></tr>";
+                    var h = "<tr><td" + styl + ">"
+                        + val.operator + "</td><td" + styl
+                        + ">" + val.count + " " + suffix + "</td></tr>";
 
                     node.append(h);
                 });
@@ -128,7 +163,7 @@
         }
     }
 
-    var viewMethods = [switchToTotalQsos, switchToMult1, switchToRateShort, switchToRateLong, switchToRatePeak, switchToSinceLastQso];
+    var viewMethods = [switchToPoints, switchToTotalQsos, switchToMult1, switchToRateShort, switchToRateLong, switchToRatePeak, switchToSinceLastQso, switchToBandStats, switchToRadioStats ];
 
     var viewNum = 0;
 
@@ -151,7 +186,9 @@
         intervalID = setInterval(refreshTable, 1000);
 
         refreshTable();
-        
+
+        $('#points').on('click', switchToPoints);
+
         $('#byTotalQso').on('click', switchToTotalQsos);
 
         $('#byMult1').on('click', switchToMult1);
@@ -163,6 +200,10 @@
         $('#ratePeak').on('click', switchToRatePeak);
 
         $('#sinceLastQso').on('click', switchToSinceLastQso);
+
+        $('#bandstats').on('click', switchToBandStats);
+
+        $('#radiostats').on('click', switchToRadioStats);
 
         setInterval(switchView, 60000);
 

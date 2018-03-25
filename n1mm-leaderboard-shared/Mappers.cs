@@ -8,6 +8,8 @@ namespace n1mm_leaderboard_shared
     {
         public static ContactDbRow Map(N1mmXmlContactBase cb)
         {
+            int.TryParse(cb.Points, out int pts);
+
             return new ContactDbRow
             {
                 Call = cb.Call,
@@ -19,6 +21,7 @@ namespace n1mm_leaderboard_shared
                 IsMultiplier1 = cb.Ismultiplier1 != 0,
                 IsMultiplier2 = cb.Ismultiplier2 != 0,
                 IsMultiplier3 = cb.Ismultiplier3 != 0,
+                Points = pts,
             };
         }
     }

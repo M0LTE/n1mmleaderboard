@@ -20,6 +20,42 @@ namespace n1mmlistener
             return Ok(list);
         }
 
+        [HttpGet("leaderboard/Points")]
+        public IActionResult GetPointsLeaderboard()
+        {
+            var repo = new ContactDbRepo();
+
+            var sw = Stopwatch.StartNew();
+            List<LeaderboardRow> list = repo.GetPointsLeaderboard();
+            InsertHeader(sw);
+
+            return Ok(list);
+        }
+
+        [HttpGet("leaderboard/BandStats")]
+        public IActionResult GetBandStats()
+        {
+            var repo = new ContactDbRepo();
+
+            var sw = Stopwatch.StartNew();
+            List<LeaderboardRow> list = repo.GetBandStats();
+            InsertHeader(sw);
+
+            return Ok(list);
+        }
+
+        [HttpGet("leaderboard/RadioStats")]
+        public IActionResult GetRadioStats()
+        {
+            var repo = new ContactDbRepo();
+
+            var sw = Stopwatch.StartNew();
+            List<LeaderboardRow> list = repo.GetSeatStatus();
+            InsertHeader(sw);
+
+            return Ok(list);
+        }
+
         [HttpGet("leaderboard/TotalIsMult1Contacts")]
         public IActionResult GetTotalIsMult1ContactsLeaderboard()
         {
